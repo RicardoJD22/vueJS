@@ -127,26 +127,26 @@
                     this.arrayUsers.push(usuario);
                 },
                 remove: function(){
-                    const usuarioAEliminar = parseInt(prompt('Ingresa el id del usuario a eliminar'));
+                    const DeleteUser = parseInt(prompt('Ingresa el id del usuario para borrar'));
 
-                    if(usuarioAEliminar < 0 || usuarioAEliminar > this.arrayUsers[this.arrayUsers.length-1].role_id){
-                        alert(`El id ${usuarioAEliminar} no existe`);
+                    if(DeleteUser < 0 || DeleteUser > this.arrayUsers[this.arrayUsers.length-1].role_id){
+                        alert(`El id ${DeleteUser} no existe`);
                     } else {
                         
-                        const index = this.arrayUsers.findIndex(user => user.role_id === usuarioAEliminar);
+                        const index = this.arrayUsers.findIndex(user => user.role_id === DeleteUser);
 
                         
                         this.arrayUsers.splice(index, 1);
                     }
                 },
                 edit: function(){
-                    const usuarioAEditar = parseInt(prompt('Ingresa el id del usuario a editar'));
+                    const EditUser = parseInt(prompt('Ingresa el id del usuario a editar'));
 
-                    if(usuarioAEditar < 0 || usuarioAEditar > this.arrayUsers[this.arrayUsers.length-1].role_id){
-                        alert(`El id ${usuarioAEditar} no existe`);
+                    if(EditUser < 0 || EditUser > this.arrayUsers[this.arrayUsers.length-1].role_id){
+                        alert(`El id ${EditUser} no existe`);
                     } else {
                        
-                        const index = this.arrayUsers.findIndex(user => user.role_id === usuarioAEditar);
+                        const index = this.arrayUsers.findIndex(user => user.role_id === EditUser);
 
                         this.arrayUsers.forEach((user, indice) => {
                             if(indice === index){
