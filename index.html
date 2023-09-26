@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FORMULARIO-TABLA</title>
+    <link rel="stylesheet" href="">
+    <style type="text/css">
+        
+        body {
+            background-image: url(22.jpg);
+        }
+        .my-class {
+            overflow: auto;
+            width: 100%;
+        }
+        .my-class table {
+            border: 1px solid #38571A;
+            height: 100%;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            border-spacing: 1px;
+            text-align: left;
+        }
+        .my-class caption {
+            caption-side: top;
+            text-align: left;
+        }
+        .my-class th {
+            border: 1px solid #38571A;
+            background-color: #ECEFF1;
+            color: #2C1376;
+            padding: 5px;
+        }
+        .my-class td {
+            border: 1px solid #38571A;
+            background-color: #FFFFFF;
+            color: #0042AA;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="container_app">
+
+    <div v-if="access" class="my-class" role="region" tabindex="0">
+        <table>
+            <caption>Lista de usuarios</caption>
+            <thead>
+            <tr>
+                <th>Personal Data</th>
+                <th>Contact Data</th>
+                <th>Address</th>
+                <th>Company Data</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(user, index) in users" :key="index">
+                <td>
+                    {{ user.name }}, {{ user.username }}
+                </td>
+                <td>
+                    {{ user.email }}, {{ user.phone }}
+                </td>
+                <td>
+                    {{ user.address.street }}, {{ user.address.zipcode }}
+                </td>
+                <td>
+                    {{ user.company.name }}
+                </td>
+                <td>
+                    <button @click="editUser(index)">Edit</button>
+                    <button @click="deleteUser(index)">Delete</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script type="text/javascript">
+    new Vue({
+        el: "#container_app",
+        data: {
+    access: localStorage.getItem('is_login') ? true : false,
+    users: [],
+    newUser: {
+        name: "",
+        username: "",
+        email: "",
+        phone: "",
+        address: {
+            street: "",
+            zipcode: "",
+        },
+        company: {
+            name: "",
+        },
+    },
+    formData: {},
+},
+
+        methods: {
+            addUser() {
+   
+    if (
+        !this.formData.name ||
+        !this.formData.username ||
+        !this.formData.email ||
+        !this.formData.phone ||
+        !this.formData.address.street ||
+        !this.formData.address.zipcode ||
+        !this.formData.company.name
+    ) {
+        alert("Por favor, llene todos los campos.");
+        return;
+    }
+
+   
+    this.users.push({ ...this.formData });
+
+    
+    this.formData = {
+        name: "",
+        username: "",
+        email: "",
+        phone: "",
+        address: {
+            street: "",
+            zipcode: "",
+        },
+        company: {
+            name: "",
+        },
+    };
+},
+
+           
+            deleteUser(index) {
+                
+                this.users.splice(index, 1);
+            },
+        },
+        mounted() {
+            const update = async () => {
+                const response = await fetch("users.json");
+                this.users = await response.json();
+            };
+
+            if (this.access) {
+                update();
+            }
+        },
+    });
+</script>
+
+<form @submit.prevent="addUser">
+    <fieldset>
+        <legend>Personal Data</legend>
+        <input type="text" v-model="newUser.name" placeholder="Name" required>
+        <input type="text" v-model="newUser.username" placeholder="Username" required>
+    </fieldset>
+
+    <fieldset>
+        <legend>Contact Data</legend>
+        <input type="email" v-model="newUser.email" placeholder="Email" required>
+        <input type="text" v-model="newUser.phone" placeholder="Phone" required>
+    </fieldset>
+
+    <fieldset>
+        <legend>Address</legend>
+        <input type="text" v-model="newUser.address.street" placeholder="Street" required>
+        <input type="text" v-model="newUser.address.zipcode" placeholder="Zipcode" required>
+    </fieldset>
+
+    <fieldset>
+        <legend>Company Data</legend>
+        <input type="text" v-model="newUser.company.name" placeholder="Company Name" required>
+    </fieldset>
+
+    <button type="submit">Añadir</button>
+</form>
+
+</body>
+</html>
