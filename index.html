@@ -1,190 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FORMULARIO-TABLA</title>
-    <link rel="stylesheet" href="">
-    <style type="text/css">
-        
-        body {
-            background-image: url(22.jpg);
-        }
-        .my-class {
-            overflow: auto;
-            width: 100%;
-        }
-        .my-class table {
-            border: 1px solid #38571A;
-            height: 100%;
-            width: 100%;
-            table-layout: fixed;
-            border-collapse: collapse;
-            border-spacing: 1px;
-            text-align: left;
-        }
-        .my-class caption {
-            caption-side: top;
-            text-align: left;
-        }
-        .my-class th {
-            border: 1px solid #38571A;
-            background-color: #ECEFF1;
-            color: #2C1376;
-            padding: 5px;
-        }
-        .my-class td {
-            border: 1px solid #38571A;
-            background-color: #FFFFFF;
-            color: #0042AA;
-            padding: 5px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>AirGibt Crud</title>
 </head>
 <body>
-
-<div class="container" id="container_app">
-
-    <div v-if="access" class="my-class" role="region" tabindex="0">
-        <table>
-            <caption>Lista de usuarios</caption>
-            <thead>
-            <tr>
-                <th>Personal Data</th>
-                <th>Contact Data</th>
-                <th>Address</th>
-                <th>Company Data</th>
-                <th>Actions</th>
+   
+    <div class="wrap" id="app">
+       
+        <h2>Iniciar sesión</h2>
+        <form action="">
+            <label for="username" >username</label>
+            <input type="text" id="username" placeholder="write here" v-model="username" id="username">
+            <label for="password">password</label>
+            <input type="password" id="password" placeholder="write here" v-model="password" id="password">
+            <button @click="login" type="button">Access</button>
+        </form>
+        
+        <table v-if="accedio">
+            <button id="btnAgregar" v-if="accedio" v-on:click="add">Add</button>
+            <tr class="header">
+                <td class="header__td">Nombre</td>
+                <td class="header__td">Usuario</td>
+                <td class="header__td">Email</td>
+                <td class="header__td">Phone</td>
+                <td class="header__td">Website</td>
+                <td class="header__td">Acciones</td>
+                
             </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(user, index) in users" :key="index">
-                <td>
-                    {{ user.name }}, {{ user.username }}
-                </td>
-                <td>
-                    {{ user.email }}, {{ user.phone }}
-                </td>
-                <td>
-                    {{ user.address.street }}, {{ user.address.zipcode }}
-                </td>
-                <td>
-                    {{ user.company.name }}
-                </td>
-                <td>
-                    <button @click="editUser(index)">Edit</button>
-                    <button @click="deleteUser(index)">Delete</button>
+            <tr v-for="user in arrayUsers">
+                <td class="datos" :contenteditable="user.editable">{{ user.name }}</td>
+                <td class="datos" :contenteditable="user.editable">{{ user.username }}</td>
+                <td class="datos" :contenteditable="user.editable">{{ user.email }}</td>
+                <td class="datos" :ontenteditable="user.editable">{{ user.phone }} </td>
+                <td class="datos" :ontenteditable="user.editable">{{ user.website }} </td>
+                <td class="datos">
+                    <button id="btnEdit" v-on:click="edit">Editar</button>
+                    <button id="btnRemove" v-on:click="remove">Borrar</button>
                 </td>
             </tr>
-            </tbody>
         </table>
     </div>
+    <style>
+        input{
+            display: block;
+        }
 
-</div>
+        td{
+            width: 420px;
+          background-color: rgb(0, 147, 197);
+          border: 2px solid rgba(0,0,0,0.2);
+          backdrop-filter: blur(20px);
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+          color: rgb(0, 0, 0);
+       
+          padding: 30px 40px;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-<script type="text/javascript">
-    new Vue({
-        el: "#container_app",
-        data: {
-    access: localStorage.getItem('is_login') ? true : false,
-    users: [],
-    newUser: {
-        name: "",
-        username: "",
-        email: "",
-        phone: "",
-        address: {
-            street: "",
-            zipcode: "",
-        },
-        company: {
-            name: "",
-        },
-    },
-    formData: {},
-},
+        table{
+            border-collapse: collapse;
+        }
 
-        methods: {
-            addUser() {
-   
-    if (
-        !this.formData.name ||
-        !this.formData.username ||
-        !this.formData.email ||
-        !this.formData.phone ||
-        !this.formData.address.street ||
-        !this.formData.address.zipcode ||
-        !this.formData.company.name
-    ) {
-        alert("Por favor, llene todos los campos.");
-        return;
-    }
+        .header__td{
+            background-color: rgb(177, 177, 161);
+        }
 
-   
-    this.users.push({ ...this.formData });
-
-    
-    this.formData = {
-        name: "",
-        username: "",
-        email: "",
-        phone: "",
-        address: {
-            street: "",
-            zipcode: "",
-        },
-        company: {
-            name: "",
-        },
-    };
-},
-
-           
-            deleteUser(index) {
-                
-                this.users.splice(index, 1);
+        .datos{
+            color: white;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                email: '',
+                username: '',
+                password: '',
+                number: '',
+                webs: '',
+                accedio: false,
+                arrayUsers: [],
+                role_id: 12
             },
-        },
-        mounted() {
-            const update = async () => {
-                const response = await fetch("users.json");
-                this.users = await response.json();
-            };
+            methods: {
+                login: async function(){
+                    //1.- traer los datos
+                    const response = await fetch("users.json");
+                    const users = await response.json();
 
-            if (this.access) {
-                update();
+                    //2.- recorrer los datos
+                    users.forEach(user => {
+                        //3.- comprobar si el usuario existe
+                        if(this.username == user.name){
+                            if(this.password == user.password){
+                                alert('bienvenido '+user.name);
+                                this.accedio = true;
+                            }
+                        }
+
+                        this.arrayUsers.push(user);
+                    });
+
+                    if(!this.accedio){
+                        alert('Verifique su información');
+                    }
+                },
+                add: function() {
+                    const nombre=prompt("Ingresa el nombre");
+                    const apellido=prompt("Ingresa el apellido");
+                    const correo=prompt("Ingresa el email");
+                    const numero=prompt("Ingresa el telefono");
+                    const web=prompt("Ingresa el sitio web");
+
+                    const usuario = {
+                        name: nombre,
+                        lastname: apellido,
+                        email: correo,
+                        numero: cel,
+                        web: website,
+                        role_id: this.role_id+=1
+                    }
+
+                    this.arrayUsers.push(usuario);
+                },
+                remove: function(){
+                    const usuarioAEliminar = parseInt(prompt('Ingresa el id del usuario a eliminar'));
+
+                    if(usuarioAEliminar < 0 || usuarioAEliminar > this.arrayUsers[this.arrayUsers.length-1].role_id){
+                        alert(`El id ${usuarioAEliminar} no existe`);
+                    } else {
+                        
+                        const index = this.arrayUsers.findIndex(user => user.role_id === usuarioAEliminar);
+
+                        
+                        this.arrayUsers.splice(index, 1);
+                    }
+                },
+                edit: function(){
+                    const usuarioAEditar = parseInt(prompt('Ingresa el id del usuario a editar'));
+
+                    if(usuarioAEditar < 0 || usuarioAEditar > this.arrayUsers[this.arrayUsers.length-1].role_id){
+                        alert(`El id ${usuarioAEditar} no existe`);
+                    } else {
+                       
+                        const index = this.arrayUsers.findIndex(user => user.role_id === usuarioAEditar);
+
+                        this.arrayUsers.forEach((user, indice) => {
+                            if(indice === index){
+                                user.editable = !user.editable;
+                            }
+                        });
+                    }
+                }
             }
-        },
-    });
-</script>
-
-<form @submit.prevent="addUser">
-    <fieldset>
-        <legend>Personal Data</legend>
-        <input type="text" v-model="newUser.name" placeholder="Name" required>
-        <input type="text" v-model="newUser.username" placeholder="Username" required>
-    </fieldset>
-
-    <fieldset>
-        <legend>Contact Data</legend>
-        <input type="email" v-model="newUser.email" placeholder="Email" required>
-        <input type="text" v-model="newUser.phone" placeholder="Phone" required>
-    </fieldset>
-
-    <fieldset>
-        <legend>Address</legend>
-        <input type="text" v-model="newUser.address.street" placeholder="Street" required>
-        <input type="text" v-model="newUser.address.zipcode" placeholder="Zipcode" required>
-    </fieldset>
-
-    <fieldset>
-        <legend>Company Data</legend>
-        <input type="text" v-model="newUser.company.name" placeholder="Company Name" required>
-    </fieldset>
-
-    <button type="submit">Añadir</button>
-</form>
-
+        });
+        
+    </script>
 </body>
 </html>
